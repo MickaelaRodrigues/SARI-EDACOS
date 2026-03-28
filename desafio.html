@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-be">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio</title>
+</head>
+
+<body>
+    <h2>SARI EDACOS</h2>
+
+    <div id="parte1">
+        Salario inicial
+        <input id="ipt_salarioinicial" type="text"><br>
+
+        Salário final:
+        <input id="ipt_salariofinal" type="text"><br>
+
+        Mês corrente:
+        <input id="ipt_mes" type="text"><br>
+
+        <button onclick="cadastrar()">REGISTRAR PARÂMETROS</button>
+
+        <div id="msgparte1"></div>
+
+    </div>
+
+    <div style="display: none;" id="parte2">
+
+        Nome do funcionário:
+        <input id="ipt_nome" type="text"><br><br>
+
+        Salario:
+        <input id="ipt_salario_parte2" type="text"><br><br>
+
+        quantidade de compra de cadeira de praia:
+        <input id="ipt_qtde_cadeira_praia" type="text"><br><br>
+
+        quantidade de compra de cadeira de jardim:
+        <input id="ipt_qtde_cadeira_jardim" type="text"><br><br>
+
+        quantidade de compra de cadeira de pesca:
+        <input id="ipt_qtde_cadeira_pesca" type="text"><br><br>
+
+        <button onclick="pagar()">Pagar salário</button><br><br>
+
+        <button onclick="parte3()">Encerrar o dia</button>
+
+        <div id="msgparte2"></div>
+
+
+    </div>
+
+
+
+
+</body>
+
+</html>
+<script>
+
+    let salarioInicial = 0
+    let salarioFinal = 0
+    let mescorrente = 0
+    let quantidadeTotalDeCadeirasJardim = 0
+    let quantidadeTotalDeCadeirasPesca = 0
+    let quantidadeTotalDeCadeirasPraia = 0
+    let valortotalDia = 0
+    let quantidadeTotaldeCadeiraas = 0
+
+    function cadastrar() {
+
+        salarioInicial = Number(ipt_salarioinicial.value)
+        salarioFinal = Number(ipt_salariofinal.value)
+        mescorrente = Number(ipt_mes.value)
+        let temErro = false
+
+        msgparte1.innerHTML = ``
+
+        if (salarioInicial < 3000) {
+            temErro = true
+            msgparte1.innerHTML += `Por favor, insira um salário inicial maior que R$3000<br>`
+        }
+        if (salarioFinal > (salarioInicial * 4)) {
+            temErro = true
+            msgparte1.innerHTML += `O salario final deve ser menor que 4x o salário inicial<br>`
+        }
+        if (mescorrente < 1 || mescorrente > 12) {
+            temErro = true
+            msgparte1.innerHTML += `Por favot, indira um numero equivalente a um mês válido<br>`
+        }
+        if (temErro == false) {
+            parte1.style.display = "none"
+            parte2.style.display = "block"
+        }
+
+    }
+
+    function pagar() {
+
+        let nome = ipt_nome.value
+        let salarioAtual = Number(ipt_salario_parte2.value)
+
+        let qtd_cadeira_pesca = Number(ipt_qtde_cadeira_pesca.value)
+        let qtd_cadeira_jardim = Number(ipt_qtde_cadeira_jardim.value)
+        let qtd_cadeira_praia = Number(ipt_qtde_cadeira_praia.value)
+
+
+        quantidadeTotalDeCadeirasJardim += qtd_cadeira_jardim
+        quantidadeTotalDeCadeirasPesca += qtd_cadeira_pesca
+        quantidadeTotalDeCadeirasPraia += qtd_cadeira_praia
+
+
+        let precoTotalCadeirasDejardim = qtd_cadeira_jardim * 120
+        let precoTotalCadeirasDePesca = qtd_cadeira_pesca * 80
+        let precoTotalCadeirasDePraia = qtd_cadeira_praia * 100
+
+        let temErro = false
+        let descontoMaximo = 0
+
+        msgparte2.innerHTML = ``
+
+        if (nome.trim() == ``) {
+            temErro = true
+            msgparte2.innerHTML += `Nome inválido, por favor insira um nome válido`
+        }
+        if (salarioAtual < salarioInicial) {
+            temErro = true
+            msgparte2.innerHTML += `O salario deve ser maior ou igual ao salário inicial do intervalo<br>`
+        }
+        if (qtd_cadeira_pesca < 0 || qtd_cadeira_jardim < 0 || qtd_cadeira_praia < 0) {
+            temErro = true
+            msgparte2.innerHTML += `A quantidade de cadeiras não pode ser representada por um número negativo<br>`
+        }
+
+        if (temErro == false) {
+
+            // criterio primeiro desconto
+
+            if ((mescorrente >= 1 && mescorrente <= 5) || (mescorrente >= 10 && mescorrente <= 12)) {
+                descontoMaximo += (precoTotalCadeirasDejardim * 0.072)
+                precoTotalCadeirasDejardim -= (precoTotalCadeirasDejardim * 0.072)
+            }
+            if ((mescorrente >= 4 && mescorrente <= 10) && qtd_cadeira_pesca > 3) {
+                descontoMaximo += (precoTotalCadeirasDePesca * 0.0609)
+                precoTotalCadeirasDePesca -= (precoTotalCadeirasDePesca * 0.0609)
+            }
+
+            //criterio segundo desconto
+
+            let totaldacompradecadeiras = precoTotalCadeirasDejardim + precoTotalCadeirasDePesca + precoTotalCadeirasDePraia
+            let totalCompra = totaldacompradecadeiras
+            valortotalDia += totaldacompradecadeiras
+
+            if (totaldacompradecadeiras > 400 && (qtd_cadeira_praia == 0 && qtd_cadeira_pesca >= 1)) {
+                descontoMaximo += (totaldacompradecadeiras * 0.025)
+                totaldacompradecadeiras -= (totaldacompradecadeiras * 0.025)
+            }
+            if (precoTotalCadeirasDejardim > precoTotalCadeirasDePesca && (precoTotalCadeirasDejardim > precoTotalCadeirasDePraia)) {
+                descontoMaximo += (totaldacompradecadeiras * 0.055)
+                totaldacompradecadeiras -= (totaldacompradecadeiras * 0.055)
+            }
+
+            // Critério de aceite da venda de cadeira
+
+            if ((salarioAtual >= salarioInicial && salarioAtual <= salarioFinal) && totaldacompradecadeiras > (salarioAtual * 0.305)) {
+                temErro = true
+                msgparte2.innerHTML = `Venda não permitida`
+            }
+
+            if (salarioAtual > salarioFinal && totaldacompradecadeiras > (salarioAtual * 0.2075)) {
+                temErro = true
+                msgparte2.innerHTML = `Venda não permitida`
+            }
+
+            if (temErro == false) {
+
+                // Emitir Extrato
+
+                let salarioLiquido = salarioAtual - totaldacompradecadeiras
+
+                msgparte2.innerHTML =
+                    `
+                <b>Extrato</b>
+
+                Nome do funcionário: ${nome}<br>
+                Salário do funcionário ${salarioAtual}<br>
+                Salário liquido ${salarioLiquido.toFixed(2)}<br><br>
+                Total de cadeiras de pesca: ${qtd_cadeira_pesca}, no valor de R$:80 a unidade <br>
+                Total de cadeiras de praia: ${qtd_cadeira_praia}, no valor de R$:100 a unidade <br>
+                Total de cadeiras de jardim: ${qtd_cadeira_jardim}, no valor de R$:120 a unidade<br><br>
+                Com desconto de ${(totalCompra - totaldacompradecadeiras).toFixed(2)}  <br>
+                Podendo ter um desconto máximo de ${descontoMaximo.toFixed(2)}<br><br>
+                
+                `
+
+
+                let cedulas200 = Math.floor(salarioLiquido / 200);
+                salarioLiquido = salarioLiquido % 200;
+
+                let cedulas50 = Math.floor(salarioLiquido / 50);
+                salarioLiquido = salarioLiquido % 50;
+
+                let cedulas20 = Math.floor(salarioLiquido / 20);
+                salarioLiquido = salarioLiquido % 20;
+
+                let cedulas5 = Math.floor(salarioLiquido / 5);
+                salarioLiquido = salarioLiquido % 5;
+
+                let cedulas1 = Math.floor(salarioLiquido / 1)
+                salarioLiquido = salarioLiquido % 1;
+
+                msgparte2.innerHTML +=
+                    `
+                <b>Quantidade de cédulas necessárias para realizar o pagamento</b><br><br>
+
+                Notas de 200: ${cedulas200}<br>
+                Notas de 50: ${cedulas50}<br>
+                Notas de 20: ${cedulas20}<br>
+                Notas de 5: ${cedulas5}<br>
+                Notas de 1: ${cedulas1}<br>
+                `
+            }
+        }
+    }
+    // parte 3 
+
+    function parte3() {
+        
+        quantidadeTotaldeCadeiraas = quantidadeTotalDeCadeirasJardim + quantidadeTotalDeCadeirasPesca + quantidadeTotalDeCadeirasPraia
+
+        msgparte2.innerHTML = ``
+
+
+        msgparte2.innerHTML =
+            `
+            <b>Extrato das cadeiras de praia<b/><br><br>
+
+            Quantidade total vendida ${quantidadeTotalDeCadeirasPraia}<br>
+            Valor Total da Venda ${quantidadeTotalDeCadeirasPraia * 100}<br>
+            Percentual de proporção por cadeira em relação ao valor total das vendas ${(((100 * quantidadeTotalDeCadeirasPraia) / valortotalDia) *100).toFixed(2)}%<br>
+            Percentual de proporção por cadeira em relação a quantidade total das vendas ${ ((quantidadeTotalDeCadeirasPraia / quantidadeTotaldeCadeiraas) *100).toFixed(2)}<br><br>
+
+            <b>Extrato das cadeiras de jardim<b/><br><br>
+
+            Quantidade total vendida ${quantidadeTotalDeCadeirasJardim}<br>
+            Valor Total da Venda ${quantidadeTotalDeCadeirasJardim * 120}<br>
+            Percentual de proporção por cadeira em relação ao valor total das vendas ${(((120 * quantidadeTotalDeCadeirasJardim) / valortotalDia)*100).toFixed(2)}%<br>
+            Percentual de proporção por cadeira em relação a quantidade total das vendas ${((quantidadeTotalDeCadeirasJardim / quantidadeTotaldeCadeiraas)*100).toFixed(2)}%<br><br>
+ 
+ 
+            <b>Extrato das cadeiras de pesca<b/><br><br>
+
+            Quantidade total vendida ${quantidadeTotalDeCadeirasPesca}<br>
+            Valor Total da Venda ${quantidadeTotalDeCadeirasPesca * 80}<br>
+            Percentual de proporção por cadeira em relação ao valor total das vendas ${(((80 * quantidadeTotalDeCadeirasPesca) / valortotalDia)*100).toFixed(2)}%<br>
+            Percentual de proporção por cadeira em relação a quantidade total das vendas ${((quantidadeTotalDeCadeirasPesca / quantidadeTotaldeCadeiraas)*100).toFixed(2)}%<br><br>
+ 
+            `
+    }
+
+</script>
